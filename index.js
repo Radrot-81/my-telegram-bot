@@ -3,11 +3,16 @@ const express = require('express');
 const app = express();
 
 app.get('/', (req, res) => res.send('Bot is Live!'));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-// টোকেনটি সরাসরি না লিখে Environment Variable থেকে নেওয়া হচ্ছে
+// টোকেন এনভায়রনমেন্ট ভেরিয়েবল থেকে নিন
 const token = process.env.TELEGRAM_TOKEN;
+if (!token) {
+  console.error('TELEGRAM_TOKEN environment variable is not set.');
+  process.exit(1);
+}
 
 const bot = new TelegramBot(token, { polling: true });
 
