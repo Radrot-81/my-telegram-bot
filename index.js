@@ -1,35 +1,45 @@
 const TelegramBot = require('node-telegram-bot-api');
-const axios = require('axios');
-const { HttpsProxyAgent } = require('https-proxy-agent');
 const express = require('express');
 
-// Express server to keep it alive
+// ১. Render-এ বোট সচল রাখার জন্য ছোট একটি সার্ভার
 const app = express();
 app.get('/', (req, res) => res.send('Bot is running!'));
-app.listen(process.env.PORT || 3000);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
-// Secrets from Environment Variables
+// ২. টেলিগ্রাম টোকেন (যা আপনি Render Environment Variable-এ দিয়েছেন)
 const token = process.env.TELEGRAM_TOKEN;
-const proxyUrl = process.env.BRIGHT_DATA_PROXY;
 
-const agent = new HttpsProxyAgent(proxyUrl);
+// ৩. বোট সেটআপ (সরাসরি কানেকশন, কোনো প্রক্সি লাগবে না)
 const bot = new TelegramBot(token, {
-  polling: true,
-  request: { agent }
+  polling: true
 });
 
-console.log('Bot is Online!');
+console.log('--- Bot is Online, Riyad Bhai! ---');
 
+// ৪. স্টার্ট কমান্ড দিলে যা হবে
 bot.onText(/\/start/, (msg) => {
-  bot.sendMessage(msg.chat.id, "স্বাগতম রিয়াদ ভাই! আপনার প্রক্সি বোট এখন সচল আছে। কার্ড ডিটেইলস পাঠান।");
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, "আসসালামু আলাইকুম রিয়াদ ভাই!\nআপনার বোট এখন Render-এ সফলভাবে চলছে। কার্ড ডিটেইলস এখানে পাঠাতে পারেন।");
 });
 
-bot.on('message', async (msg) => {
+// ৫. যেকোনো মেসেজ আসলে যা হবে
+bot.on('message', (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
 
+  // যদি মেসেজটি কোনো কমান্ড না হয় (যেমন কার্ড নম্বর)
   if (text && !text.startsWith('/')) {
-    bot.sendMessage(chatId, "আপনার কার্ডটি চেক করা হচ্ছে, দয়া করে অপেক্ষা করুন...");
-    // এখানে আপনার কার্ড চেকিং লজিক কাজ করবে
+    bot.sendMessage(chatId, "আপনার মেসেজটি আমি পেয়েছি। এটি এখন প্রসেস করা হচ্ছে...");
+    
+    // এখানে আপনার কার্ড চেকিং এর বাকি কাজ হবে
+    console.log(`New Message from ${chatId}: ${text}`);
   }
+});
+
+// ৬. এরর হ্যান্ডলিং (যাতে বোট ক্রাশ না করে)
+bot.on('polling_error', (error) => {
+  console.log('Polling Error:', error.code); 
 });
