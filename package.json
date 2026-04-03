@@ -1,15 +1,10 @@
 {
-  "name": "telegram-proxy-bot",
+  "name": "my-checker-web",
   "version": "1.0.0",
-  "description": "Proxy bot for card checking",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
   "dependencies": {
-    "node-telegram-bot-api": "^0.66.0",
-    "axios": "^1.6.7",
-    "https-proxy-agent": "^7.0.4",
-    "express": "^4.18.2"
+    "axios": "^1.6.0",
+    "express": "^4.18.2",
+    "https-proxy-agent": "^7.0.2"
   }
 }
